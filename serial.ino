@@ -1,5 +1,5 @@
 #include <Sleep_n0m1.h>
-#include <Wire.h>                                // I2C functions
+#include <I2C.h>                                // I2C functions
 #include <SPI.h>
 #include <SD.h>	                                 // the SD Card library
 #include <SoftwareSerial.h>                      // soft serial ports
@@ -49,8 +49,9 @@ void setup() {
   digitalWrite(SDpower, HIGH);		    // turn on SDcard LED at startup to verify operation
   delay(100);
 
-  Wire.begin();                                  // enable i2c bus
-  
+  I2c.begin();                                  // enable i2c bus
+  I2c.timeOut(3000);
+
   Serial.begin(9600);
 
   rtc.begin();  
@@ -61,7 +62,7 @@ void setup() {
 
   }
   now = rtc.now();
-
+  I2c.end();
   printDate();
   Serial.println();
 
@@ -271,13 +272,13 @@ void sleeping() {
 void loop() {
   distance = get_distance();
   
-  Wire.begin();
+  I2c.begin();
+  I2c.timeOut(3000);
   digitalWrite(SDpower, HIGH);                   // turn on power to SDcard
   delay(10);
   
   now = rtc.now();
-  
-  //Serial.begin(9600);
+  I2c.end();
   storeData();                                 // store data to SD card
   digitalWrite(SDpower, LOW);                      // turn off SDcard power
 
